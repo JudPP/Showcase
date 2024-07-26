@@ -1,0 +1,10 @@
+Django==5.0.2
+psycopg2==2.9.9
+django-bootstrap5==23.4
+djangorestframework==3.15.0
+google-auth
+google-auth-oauthlib
+google-auth-httplib2
+google-api-python-client
+pytz
+reportlab==4.1.0

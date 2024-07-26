@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% load django_bootstrap5 %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center">
+    <h1>Turnover for {{date}}</h1>
+    <a class="btn btn-secondary" href="{% url 'turnover_download' date %}" role="button">Generate PDF</a> 
+
+</div>
+
+<form method="post" action="{% url 'turnover' %}" class="form-group" >
+    {% csrf_token %}
+    <label for="date">Change Date</label>
+    <div class="input-group">
+        <input id="date" class="form-control" type="date" name="wanted_date" value="{{date}}"/>
+        {% bootstrap_button button_type="submit" content="search" %}
+    </div>
+</form>
+
+{% for type, date in turnover.items %}
+    <div class="container mt-3">
+        <h2>{{type}}</h2>
+        <div class="row g-2">
+            {% for grouping in date %}
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                {% if type == "Daily" %}
+                                    Day
+                                {% elif type == "Weekly" %}
+                                    Week
+                                {% elif type == "Monthly" %}
+                                    Month
+                                {% else %}
+                                    ????
+                                {% endif %}
+                                {{ forloop.counter }}</h5>
+                            <p class="card-text">
+                                <ul class="list-group">
+                                    {% for key, value in grouping.items %} 
+                                        <li class="list-group-item d-flex" style="white-space: nowrap;">{{key}}: {{value}}</li>
+                                    {% endfor %}
+                                </ul>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endfor %}
+{% endblock %}

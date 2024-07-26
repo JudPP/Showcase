@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+<div class="modal" tabindex="-1" role="dialog" style="display: block; background: rgba(0,0,0,0.5);">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Forward Appointment</h5>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="{% url 'forward_appointment' appointment_id %}">
+          {% csrf_token %}
+          {% bootstrap_field form.reason %}
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Submit Reason</button>
+            <a href="{% url 'appointment' %}" class="btn btn-secondary">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Surgery Schedule:</h2>
+
+    {% if events %}
+    <table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Start</th>
+            <th>End</th>
+            <th>Description</th>
+            <th>Summary</th>
+        </tr>
+    </thead>
+
+        <tbody>
+            {% for event in events %}
+                <tr>
+                    <td>{{ event.start.dateTime }}</td>
+                    <td>{{ event.end.dateTime }}</td>
+                    <td>{{ event.description }}</td>
+                    <td>{{ event.summary }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+    {% else %}
+        <p>No upcoming events found.</p>
+    {% endif %}
+{% endblock %}

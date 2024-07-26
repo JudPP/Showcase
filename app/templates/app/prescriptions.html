@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load django_bootstrap5 %}
+
+
+{% block content %}
+
+<a href="{% url 'prescription_issue' %}" class="btn btn-primary">Issue Prescription</a>
+<br>
+
+<h2>List of Prescriptions</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Patient</th>
+                <th>NHS Patient</th>
+                <th>Price</th>
+                <th>Payment Required</th>
+                <th>Is Repeating</th>
+                <th>Time Prescribed</th>
+                <th>Approved</th>
+                <th>Related previous prescription</th>
+                <th>Invoice</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for prescription in prescriptions %}
+            <tr>
+                <td>{{ prescription.id }}</td>
+                <td>{{ prescription.patient }}</td>
+                <td>{{ prescription.patient.isNHS }}</td>
+                <td>{{ prescription.price }}</td>
+                <td>{{ prescription.paymentRequired }}</td>
+                <td>{{ prescription.isRepeating }}</td>
+                <td>{{ prescription.prescriptionTime }}</td>
+                {% if prescription.isApproved %}
+                <td>{{ prescription.isApproved }}</td>
+                {% else %}
+                <td>
+                    <form method="post" action="{% url 'prescription_approval' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="prescriptionid" value="{{ prescription.id }}">
+                        <input type="hidden" name="approval" value=1>
+                        {% bootstrap_button button_type="submit" content="Approve" %}
+                    </form>
+                    <form method="post" action="{% url 'prescription_approval' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="prescriptionid" value="{{ prescription.id }}">
+                        <input type="hidden" name="approval" value=0>
+                        <button type="submit" class="btn btn-danger">Reject</button>
+                    </form>
+                </td>
+                {% endif %}
+                <td>{{ prescription.previousPrescription.id }}</td>
+                <td>
+                    <form method="post" action="{% url 'invoice_prescription_download' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="prescriptionid" value="{{ prescription.id }}">
+                        {% bootstrap_button button_type="submit" content="Print" %}
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

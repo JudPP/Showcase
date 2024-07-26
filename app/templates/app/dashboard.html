@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+<link href="{% static 'css/dashboard.css' %}" rel="stylesheet">
+
+<h2 class="text-center mb-3">
+    <img id="{{ role }}bg" src="{% static 'imgs/' %}{{ role }}-icon.jpg">
+    {{ role|title }} Dashboard
+    <img id="{{ role }}bg" src="{% static 'imgs/' %}{{ role }}-icon.jpg">
+</h2>
+<p class="text-center">Welcome, {{ title }} {{ first_name }} {{ last_name }}!</p>
+
+{% if role == "ADMIN" %}
+<div class="col-mb-3">
+    <a href="{% url 'admin:index' %}" class="btn btn-primary">Superuser Dashboard</a>
+    <a href="{% url 'user_list' %}" class="btn btn-primary">Users</a>
+    <a href="{% url 'turnover' %}" class="btn btn-primary">Turnover</a>
+    <a href="{% url 'appointment' %}" class="btn btn-primary">Appointment</a>
+    <form action="{% url 'clear_schedule' %}" method="post" style="display: inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Clear Google Schedule</button>
+    </form>
+    <form action="{% url 'wipe_users' %}" method="post" style="display: inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Wipe all Users</button>
+    </form>
+</div>
+
+{% else %}
+<div class="col-mb-3">
+    <a href="{% url 'appointment' %}" class="btn btn-primary">Appointments</a>
+    <a href="{% url 'prescriptions' %}" class="btn btn-primary">View Prescriptions</a>
+    {% endif %}
+    {% if role == "DOCTOR" or role == "NURSE" %}
+    <a href="{% url 'schedule' %}" class="btn btn-primary">View Schedule</a>
+    <a href="{% url 'patient_search' %}" class="btn btn-primary">Search Patient</a>
+</div>
+{% endif %}
+<div class="row my-3">
+    <div class="col-sm-4">
+        <div class="card bg-primary text-white" style="height: 14rem;">
+            <div class="card-body">
+                <h4 class="card-title">Account Details:</h4>
+                <p class="card-text">Account email: {{ email }}</p>
+                <p class="card-text">First name: {{ first_name }}</p>
+                <p class="card-text">Last name: {{ last_name }}</p>
+                <p class="card-text">Account address: {{ address }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm">
+        <div class="card bg-primary text-white" style="height: 14rem;">
+            <div class="card-body">
+                <h4 class="card-title">Additional Details:</h4>
+                <p class="card-text">Last login: {{ last_login }}</p>
+                <p class="card-text">Date joined: {{ date_joined }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm">
+        <div class="card bg-primary text-white" style="height: 14rem;">
+            <div class="card-body">
+                <h4 class="card-title">{{ role|title }} Notifications</h4>
+                <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum facilis
+                    accusantium ab quia, soluta ipsu</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

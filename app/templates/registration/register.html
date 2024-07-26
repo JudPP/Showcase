@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=AIzaSyBpDJa1JVSaixilayq8OkZ0vxylV3N4-PI"></script>
+ 
+
+<h2>Register</h2>
+<form action="{% url 'register' %}" method="post" class="form">
+  {% csrf_token %}
+  {% bootstrap_form form %}
+  <label>Location:</label>
+  <input type="text" class="form-control" id="search_input" name="address" placeholder="Type address..." />
+  <p></p>
+  {% bootstrap_button button_type="submit" content="Register" %}
+</form>
+
+<script>
+  var searchInput = 'search_input';
+   
+  $(document).ready(function () {
+   var autocomplete;
+   autocomplete = new google.maps.places.Autocomplete((document.getElementById(searchInput)), {
+    types: ['geocode'],
+    componentRestrictions: {
+     country: "UK"
+    }
+   });
+    
+   google.maps.event.addListener(autocomplete, 'place_changed', function () {
+    var near_place = autocomplete.getPlace();
+    document.getElementById('search_input').value = near_place.formatted_address;
+   });
+  });
+</script>
+{% endblock %}

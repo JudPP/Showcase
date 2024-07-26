@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+<h2>Log In</h2>
+
+<form method="post" action="{% url 'login' %}">
+  {% csrf_token %}
+  {% bootstrap_form form %}
+  {% bootstrap_button button_type="submit" content="Login" %}
+</form>
+ 
+<H1>Included Login Details:</H1>
+
+<H1> Admin: </H1>
+
+<p> Username: admin</p>
+<p> Password: admin</p>
+
+<H1> Doctor:</H1>
+
+<p> Username: drfirst</p>
+<p> Password: testingplease</p>
+
+<H1> Nurse:</H1>
+
+<p> Username: msbest</p>
+<p> Password: testingplease</p>
+
+<H1> Patient:</H1>
+
+<p> Username: robsmith</p>
+<p> Password: testingplease</p>
+
+{% endblock %}

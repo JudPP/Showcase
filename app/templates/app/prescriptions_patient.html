@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load django_bootstrap5 %}
+
+
+{% block content %}
+
+<h2>List of Prescriptions</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Prescriptioner</th>
+                <th>Price</th>
+                <th>Payment Required</th>
+                <th>Time Prescribed</th>
+                <th>Previous related prescription</th>
+                <th>Request Repeat</th>
+                <th>Invoice</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for prescription in prescriptions %}
+            <tr>
+                <td>{{ prescription.id }}</td>
+                <td>{{ prescription.prescriptioner }}</td>
+                <td>{{ prescription.price }}</td>
+                <td>
+                    {% if prescription.paymentRequired %}
+                    <form action="{% url 'payment_pres' prescription.id %}" method="get">
+                        {% csrf_token %}
+                        {% bootstrap_button button_type="submit" content="Pay" %}
+                    </form>
+                    {% else %}
+                    {{ prescription.paymentRequired }}
+                    {% endif %}
+                </td>
+                <td>{{ prescription.prescriptionTime }}</td>
+                <td>{{ prescription.previousPrescription.id }}</td>
+                {% if prescription.isRepeating %}
+                {% if prescription.isApproved %}
+                {% if not prescription.repeatRequested %}
+                {% if not prescription.paymentRequired %}
+                <td>
+                    <form method="post" action="{% url 'prescription_repeat' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="prescriptionid" value="{{ prescription.id }}">
+                        {% bootstrap_button button_type="submit" content="Request repeating prescription" %}
+                    </form>
+                </td>
+                {% else %}
+                <td>Waiting for payment</td>
+                {% endif %}
+                {% else %}
+                <td>Repeat prescription requested</td>
+                {% endif %}
+                {% else %}
+                <td>Pending approval</td>
+                {% endif %}
+                {% else %}
+                <td></td>
+                {% endif %}
+                <td>
+                    <form method="post" action="{% url 'invoice_prescription_download' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="prescriptionid" value="{{ prescription.id }}">
+                        {% bootstrap_button button_type="submit" content="Print" %}
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

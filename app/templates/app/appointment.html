@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+    <h2>Appointments</h2>
+
+    {% if request.user.is_superuser %}
+        <h5>Set New Price</h5>
+        <form method="post" action="{% url 'appointment' %}" class="form-group" >
+            {% csrf_token %}
+            <div class="row">
+                <div class="col form-group">
+                  <label>Doctor Price</label>
+                  <input type="text" name="doctor_price" value="{{doctor_price}}" class="form-control">
+                </div>
+                <div class="col form-group">
+                  <label>Nurse Price</label>
+                  <input type="text" name="nurse_price" value="{{nurse_price}}" class="form-control">
+                </div>
+              </div>
+            {% bootstrap_button button_type="submit" content="Update" %}
+        </form>
+
+        <h5>View Appointments by Practitioner</h5>
+        <form method="get" action="{% url 'appointment' %}" class="form-group">
+            <select name="practitioner_id" class="form-select" onchange="this.form.submit()">
+                <option value="">Select a Practitioner</option>
+                {% for practitioner in practitioners %}
+                    <option value="{{ practitioner.id }}" {% if practitioner.id == selected_practitioner_id %}selected{% endif %}>
+                        {{ practitioner.username }}
+                    </option>
+                {% endfor %}
+            </select>
+        </form>
+    {% endif %}
+
+    {% if appointments %}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Patient</th>
+                <th>Practitioner</th>
+                <th>NHS Patient</th>
+                <th>Time</th>
+                <th>Duration(mins)</th>
+                <th>Price</th>
+                <th>Description</th>
+                <th>Forwarded Information:</th>
+                <th>Invoice</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for appointment in appointments %}
+            <tr>
+                <td>{{ appointment.date }} </td>
+                <td>{{ appointment.patient.username }} </td>
+                <td>{{ appointment.practitioner.username}}</td>
+                <td>{{ appointment.patient.isNHS }} </td>
+                <td>{{ appointment.time }} </td>
+                <td>{{ appointment.duration }} </td>
+                <td>{{ appointment.price }} </td>
+                <td>{{ appointment.description }}</td>
+                <td>{{ appointment.forward_reason}}</td>
+                <td>
+                    <form method="post" action="{% url 'invoice_download' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="appointmentid" value="{{ appointment.id }}">
+                        {% bootstrap_button button_type="submit" content="Print" %}
+                    </form>
+                </td>
+                <td>
+                    <form action="{% url 'forward_appointment' appointment.id %}" method="post" >
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Forward</button>
+                    </form>
+                </td>
+                    <td>
+                        <form action="{% url 'cancel_appointment' appointment.id %}" method="post" >
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Cancel</button>
+                        </form>
+                    </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p>No appointments found for you.</p>
+    {% endif %}
+
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load django_bootstrap5 %}
+
+
+{% block content %}
+
+    <h2>Issue Prescription</h2>
+
+    <form method="post" action="{% url 'prescription_issue' %}">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        {% bootstrap_button button_type="submit" content="Issue Prescription" %}
+      </form>
+{% endblock %}

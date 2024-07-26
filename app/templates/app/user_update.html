@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+<h2 class="d-flex justify-content-between align-items-center">
+  <a class="btn btn-secondary" href="{% url 'user_list' %}" role="button">Back</a> 
+  Update
+</h2>
+<form method="post" class="form">
+  {% csrf_token %}
+  {% bootstrap_form form %}
+  <h2 class="d-flex justify-content-between align-items-center">
+    {% bootstrap_button button_type="submit" content="Update" %}
+    {% if user.is_active is False %}
+      <a class="btn btn-warning" href="{{user.id}}/approve" role="button">Approve</a> 
+    {% endif %}
+    <a class="btn btn-danger" href="{{user.id}}/delete" role="button">Delete</a> 
+  </h2>
+</form>
+{% endblock %}
